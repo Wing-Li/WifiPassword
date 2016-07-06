@@ -2,8 +2,10 @@ package com.lyl.wifipassword;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mHeaderHint;
 
     private ArrayList<WifiInfo> mWifiInfoList;
+    private MyAdapter myAdapter;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,18 +44,26 @@ public class MainActivity extends AppCompatActivity {
 
         mHeaderHint = (TextView) findViewById(R.id.header_hint);
 
-        getWifiInfo();
+
         setListView();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getWifiInfo();
     }
 
     private void setListView() {
         mListView = (ListView) findViewById(R.id.listview);
-        mListView.setAdapter(new MyAdapter());
+        myAdapter = new MyAdapter();
+        mListView.setAdapter(myAdapter);
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 ClipboardManager cmb = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                cmb.setPrimaryClip(ClipData.newPlainText(getString(R.string.item_pasword_hint), mWifiInfoList.get(position).getPassword()));
+                cmb.setPrimaryClip(ClipData.newPlainText(getString(R.string.item_pasword_hint), mWifiInfoList.get(position)
+                        .getPassword()));
                 Toast.makeText(getApplicationContext(), R.string.copy_success, Toast.LENGTH_SHORT).show();
                 return true;
             }
@@ -81,9 +92,14 @@ public class MainActivity extends AppCompatActivity {
             inputStreamReader.close();
             process.waitFor();
         } catch (Exception e) {
-            mHeaderHint.setText(R.string.not_root_hint_txt);
-            Toast.makeText(getApplicationContext(), R.string.not_root_hint, Toast.LENGTH_LONG).show();
+            return;
         } finally {
+
+            if (TextUtils.isEmpty(wifiConf.toString())) {
+                mHeaderHint.setText(R.string.not_root_hint_txt);
+                Toast.makeText(getApplicationContext(), R.string.not_root_hint, Toast.LENGTH_LONG).show();
+            }
+
             try {
                 if (dataOutputStream != null) {
                     dataOutputStream.close();
@@ -118,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
                 mWifiInfoList.add(wifiInfo);
             }
         }
+        myAdapter.notifyDataSetChanged();
     }
 
     class MyAdapter extends BaseAdapter {
@@ -177,10 +194,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
         switch (itemId) {
-            case R.menu.menu:
-
+            case R.id.menu:
+                startActivity(new Intent(MainActivity.this, AboutActivity.class));
                 break;
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 }

@@ -7,4 +7,6 @@
     <string name="not_root_hint">请先获取Root权限...</string>
     <string name="not_root_hint_txt">请确保本程序已获取Root权限，本软件为开源项目，绝对保证无安全隐患，请从正规渠道下载!!!</string>
     <string name="empty_password">无密码</string>
+    <string name="github">https://github.com/Wing-Li</string>
+    <string name="home">http://www.jianshu.com/users/320f9e8f7fc9/</string>
 </resources>
