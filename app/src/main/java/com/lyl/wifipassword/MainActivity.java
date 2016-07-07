@@ -23,6 +23,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -134,6 +135,8 @@ public class MainActivity extends AppCompatActivity {
                 mWifiInfoList.add(wifiInfo);
             }
         }
+        // 列表倒序
+        Collections.reverse(mWifiInfoList);
         myAdapter.notifyDataSetChanged();
     }
 
